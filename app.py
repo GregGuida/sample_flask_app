@@ -1,9 +1,10 @@
 import os
 from flask import Flask, render_template, send_from_directory
-from flask.ext.heroku import Heroku
+from flask.ext.sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-heroku = Heroku(app)
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
+db = SQLAlchemy(app)
 
 # controllers
 @app.route('/favicon.ico')
