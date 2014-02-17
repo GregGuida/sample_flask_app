@@ -5,6 +5,7 @@ MarkupSafe==0.18
 SQLAlchemy==0.9.2
 Werkzeug==0.9.4
 flask-heroku==0.1.8
+geopy==0.98
 gunicorn==18.0
 itsdangerous==0.23
 psycopg2==2.5.2
