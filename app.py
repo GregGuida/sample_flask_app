@@ -1,7 +1,7 @@
 import os
 import sys
 import json
-from flask import Flask, render_template, send_from_directory
+from flask import Flask, render_template, send_from_directory, request
 from flask.ext.sqlalchemy import SQLAlchemy
 from geopy import geocoders
 
@@ -26,6 +26,10 @@ class FavoriteLocation(db.Model,AbstractModel):
   address = db.Column(db.Text)
   
   def __init__(self, name, address):
+    self.name = name 
+    self.address, (self.lat, self.lng) = geocoder.geocode(address)
+
+  def update(self, name, address):
     self.name = name
     self.address, (self.lat, self.lng) = geocoder.geocode(address)
 
@@ -77,16 +81,13 @@ def api_new_favorites():
   db.session.commit()
   return json.dumps(new_fav.to_dict())
 
-@app.route("/api/favorites/<int:id>", methods=['PUSH'])
+@app.route("/api/favorites/<int:id>", methods=['PUT'])
 def edit_favorites(id):
   post_json = json.loads(request.data)
   fav = FavoriteLocation.query.filter_by(id=id).first()
-  for attr in post_json:
-    if attr in dir(fav):
-      setattr(fav, attr, post_json['attr'])
-  admin.email = 'my_new_email@example.com'
+  fav.update(post_json['name'],post_json['address'])
   db.session.commit()
-  return json.dumps(new_fav.to_dict())
+  return json.dumps(fav.to_dict())
 
 
 # launch
